@@ -1,73 +1,58 @@
 package com.projeto.av1.service;
 
-import com.projeto.av1.model.Aposta;
-import com.projeto.av1.model.Estatistica;
-import com.projeto.av1.model.Rodada;
-import com.projeto.av1.repository.ApostaRepository;
-import com.projeto.av1.repository.EstatisticaRepository;
+import com.projeto.av1.model.*;
+import com.projeto.av1.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class EstatisticaService {
 
-    private final EstatisticaRepository repository;
     private final ApostaRepository apostaRepository;
+    private final EstatisticaRepository estatisticaRepository;
+    private final BolaoRepository bolaoRepository;
+    private final RodadaRepository rodadaRepository;
 
-    public EstatisticaService(EstatisticaRepository repository, ApostaRepository apostaRepository) {
-        this.repository = repository;
+    public EstatisticaService(ApostaRepository apostaRepository,
+                              EstatisticaRepository estatisticaRepository,
+                              BolaoRepository bolaoRepository,
+                              RodadaRepository rodadaRepository) {
         this.apostaRepository = apostaRepository;
+        this.estatisticaRepository = estatisticaRepository;
+        this.bolaoRepository = bolaoRepository;
+        this.rodadaRepository = rodadaRepository;
     }
 
-    public List<Estatistica> listar() {
-        return repository.findAll();
-    }
+    public Estatistica gerarEstatistica(Long bolaoId, Long rodadaId) {
 
-    public Estatistica buscar(Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    public Estatistica salvar(Estatistica estatistica) {
-        return repository.save(estatistica);
-    }
-
-    public void remover(Long id) {
-        repository.deleteById(id);
-    }
-
-    public Estatistica gerarEstatistica(Rodada rodada) {
-
-        List<Aposta> apostas = apostaRepository.findAll().stream()
-                .filter(a -> a.getJogo() != null
-                        && a.getJogo().getRodada() != null
-                        && a.getJogo().getRodada().getId().equals(rodada.getId()))
-                .toList();
+        List<Aposta> apostas = apostaRepository.findByBolaoIdAndRodadaId(bolaoId, rodadaId);
 
         if (apostas.isEmpty()) {
-            return null;
+            throw new RuntimeException("Nenhuma aposta encontrada para esta rodada.");
         }
 
         Aposta maior = apostas.stream()
-                .max((a1, a2) -> Integer.compare(a1.getPontos(), a2.getPontos()))
+                .max(Comparator.comparing(Aposta::getPontos))
                 .orElse(null);
 
         Aposta menor = apostas.stream()
-                .min((a1, a2) -> Integer.compare(a1.getPontos(), a2.getPontos()))
+                .min(Comparator.comparing(Aposta::getPontos))
                 .orElse(null);
 
-        double media = apostas.stream()
-                .mapToInt(Aposta::getPontos)
-                .average()
-                .orElse(0.0);
+        Estatistica e = new Estatistica();
+        e.setBolao(bolaoRepository.findById(bolaoId).orElse(null));
+        e.setRodada(rodadaRepository.findById(rodadaId).orElse(null));
+        e.setMaiorPontuador(maior != null ? maior.getUsuario() : null);
+        e.setMenorPontuador(menor != null ? menor.getUsuario() : null);
 
-        Estatistica estatistica = new Estatistica();
-        estatistica.setRodada(rodada);
-        estatistica.setBolao(rodada.getBolao());
-        estatistica.setMaiorPontuador(maior != null ? maior.getUsuario() : null);
-        estatistica.setMenorPontuador(menor != null ? menor.getUsuario() : null);
-        estatistica.setMediaPontos(media);
+        e.setMediaPontos(
+                apostas.stream().mapToInt(Aposta::getPontos).average().orElse(0)
+        );
 
-        return repository.save(estatistica);
+        e.setTotalApostadores(apostas.size());
+
+        return estatisticaRepository.save(e);
     }
 }

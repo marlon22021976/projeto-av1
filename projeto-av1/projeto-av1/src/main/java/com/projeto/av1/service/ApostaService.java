@@ -27,22 +27,38 @@ public class ApostaService {
         return repository.findAll();
     }
 
+    public List<Aposta> listarPorJogo(Long jogoId) {
+        return repository.findByJogoId(jogoId);
+    }
+
     public Aposta buscar(Long id) {
         return repository.findById(id).orElse(null);
     }
 
     public Aposta salvar(Aposta aposta) {
 
-        // Se há jogo vinculado e o jogo já tem vencedor,
-        // então calcula os pontos automaticamente.
         if (aposta.getJogo() != null && aposta.getJogo().getId() != null) {
+
             Jogo jogo = jogoRepository.findById(aposta.getJogo().getId()).orElse(null);
 
-            if (jogo != null && jogo.getVencedor() != null) {
-                aposta.setPontos(pontuacaoService.calcularPontos(jogo, aposta));
+            if (jogo != null) {
+                // Preenche bolão e rodada automaticamente se não vier no JSON
+                if (aposta.getBolao() == null && jogo.getRodada() != null) {
+                    aposta.setBolao(jogo.getRodada().getBolao());
+                }
+                if (aposta.getRodada() == null) {
+                    aposta.setRodada(jogo.getRodada());
+                }
+
+                if (jogo.getVencedor() != null) {
+                    aposta.setPontos(pontuacaoService.calcularPontos(jogo, aposta));
+                } else {
+                    aposta.setPontos(0);
+                }
             } else {
                 aposta.setPontos(0);
             }
+
         } else {
             aposta.setPontos(0);
         }

@@ -2,7 +2,7 @@ package com.projeto.av1.service;
 
 import com.projeto.av1.model.Aposta;
 import com.projeto.av1.model.Jogo;
-import com.projeto.av1.model.ResultadoJogo;
+import com.projeto.av1.model.Vencedor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,19 +23,19 @@ public class PontuacaoService {
         Integer palpiteFora = aposta.getPalpiteFora();
 
         // EMPATE
-        if (jogo.getVencedor() == ResultadoJogo.EMPATE
+        if (jogo.getVencedor() == Vencedor.EMPATE
                 && palpiteCasa.equals(palpiteFora)) {
             return 1;
         }
 
         // CASA venceu
-        if (jogo.getVencedor() == ResultadoJogo.CASA
+        if (jogo.getVencedor() == Vencedor.CASA
                 && palpiteCasa > palpiteFora) {
             return 3;
         }
 
         // FORA venceu
-        if (jogo.getVencedor() == ResultadoJogo.FORA
+        if (jogo.getVencedor() == Vencedor.FORA
                 && palpiteCasa < palpiteFora) {
             return 3;
         }

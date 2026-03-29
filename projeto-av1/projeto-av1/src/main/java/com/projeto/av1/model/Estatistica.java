@@ -35,63 +35,37 @@ public class Estatistica {
     @Column(name = "media_pontos")
     private Double mediaPontos;
 
-    public Estatistica() {
-    }
+    @JsonProperty("total_apostadores")
+    @Column(name = "total_apostadores")
+    private Integer totalApostadores;
 
-    public Estatistica(Long id, Rodada rodada, Bolao bolao, Usuario maiorPontuador, Usuario menorPontuador, Double mediaPontos) {
+    public Estatistica() {}
+
+    public Estatistica(Long id, Rodada rodada, Bolao bolao,
+                       Usuario maiorPontuador, Usuario menorPontuador,
+                       Double mediaPontos, Integer totalApostadores) {
         this.id = id;
         this.rodada = rodada;
         this.bolao = bolao;
         this.maiorPontuador = maiorPontuador;
         this.menorPontuador = menorPontuador;
         this.mediaPontos = mediaPontos;
+        this.totalApostadores = totalApostadores;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public Rodada getRodada() { return rodada; }
+    public Bolao getBolao() { return bolao; }
+    public Usuario getMaiorPontuador() { return maiorPontuador; }
+    public Usuario getMenorPontuador() { return menorPontuador; }
+    public Double getMediaPontos() { return mediaPontos; }
+    public Integer getTotalApostadores() { return totalApostadores; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Rodada getRodada() {
-        return rodada;
-    }
-
-    public void setRodada(Rodada rodada) {
-        this.rodada = rodada;
-    }
-
-    public Bolao getBolao() {
-        return bolao;
-    }
-
-    public void setBolao(Bolao bolao) {
-        this.bolao = bolao;
-    }
-
-    public Usuario getMaiorPontuador() {
-        return maiorPontuador;
-    }
-
-    public void setMaiorPontuador(Usuario maiorPontuador) {
-        this.maiorPontuador = maiorPontuador;
-    }
-
-    public Usuario getMenorPontuador() {
-        return menorPontuador;
-    }
-
-    public void setMenorPontuador(Usuario menorPontuador) {
-        this.menorPontuador = menorPontuador;
-    }
-
-    public Double getMediaPontos() {
-        return mediaPontos;
-    }
-
-    public void setMediaPontos(Double mediaPontos) {
-        this.mediaPontos = mediaPontos;
-    }
+    public void setId(Long id) { this.id = id; }
+    public void setRodada(Rodada rodada) { this.rodada = rodada; }
+    public void setBolao(Bolao bolao) { this.bolao = bolao; }
+    public void setMaiorPontuador(Usuario maiorPontuador) { this.maiorPontuador = maiorPontuador; }
+    public void setMenorPontuador(Usuario menorPontuador) { this.menorPontuador = menorPontuador; }
+    public void setMediaPontos(Double mediaPontos) { this.mediaPontos = mediaPontos; }
+    public void setTotalApostadores(Integer totalApostadores) { this.totalApostadores = totalApostadores; }
 }

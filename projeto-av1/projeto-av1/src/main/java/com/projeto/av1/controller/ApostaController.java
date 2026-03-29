@@ -42,10 +42,12 @@ public class ApostaController {
 
         existente.setPalpiteCasa(nova.getPalpiteCasa());
         existente.setPalpiteFora(nova.getPalpiteFora());
-        existente.setPontos(nova.getPontos());
         existente.setUsuario(nova.getUsuario());
         existente.setJogo(nova.getJogo());
+        existente.setBolao(nova.getBolao());
+        existente.setRodada(nova.getRodada());
 
+        // Pontos serão recalculados automaticamente ao chamar salvar()
         return ResponseEntity.ok(service.salvar(existente));
     }
 

@@ -27,7 +27,7 @@ public class Jogo {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vencedor")
-    private ResultadoJogo vencedor;
+    private Vencedor vencedor;
 
     @ManyToOne
     @JoinColumn(name = "rodada_id")
@@ -36,7 +36,7 @@ public class Jogo {
     public Jogo() {
     }
 
-    public Jogo(Long id, String timeCasa, String timeFora, LocalDateTime dataHora, ResultadoJogo vencedor, Rodada rodada) {
+    public Jogo(Long id, String timeCasa, String timeFora, LocalDateTime dataHora, Vencedor vencedor, Rodada rodada) {
         this.id = id;
         this.timeCasa = timeCasa;
         this.timeFora = timeFora;
@@ -77,11 +77,11 @@ public class Jogo {
         this.dataHora = dataHora;
     }
 
-    public ResultadoJogo getVencedor() {
+    public Vencedor getVencedor() {
         return vencedor;
     }
 
-    public void setVencedor(ResultadoJogo vencedor) {
+    public void setVencedor(Vencedor vencedor) {
         this.vencedor = vencedor;
     }
 
